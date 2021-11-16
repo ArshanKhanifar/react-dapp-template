@@ -1,26 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import { useWeb3Context } from "./Web3Context";
+import { TopBar } from "./components/TopBar";
 
-function App() {
+export const App = () => {
+  const { connected, address, hasCachedProvider, connect, chainID } =
+    useWeb3Context();
+
+  const secret = process.env.NOT_SECRET_CODE;
+
+  const [color, setColor] = useState("#aabbcc");
+
+  useEffect(() => {
+    if (hasCachedProvider()) {
+      connect();
+    }
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <TopBar />
+      <div className={"main-container"}>
+        {connected ? (
+          <>
+            <h1>Connected</h1>
+            <p>Chain ID: {chainID}</p>
+            <p>address: {address}</p>
+          </>
+        ) : (
+          <>
+            <h1>Not Connected</h1>
+            <p>You are not connected, connect to metamask</p>
+          </>
+        )}
+        {connected && <h1>you're connected!</h1>}
+      </div>
     </div>
   );
-}
-
-export default App;
+};
